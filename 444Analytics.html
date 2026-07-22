@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CV Analytics — Giorgi Kvaratskhelia</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0E14'/%3E%3Ctext x='32' y='44' font-family='Arial' font-size='30' font-weight='700' fill='%237CE0A8' text-anchor='middle'%3E%E2%97%89%3C/text%3E%3C/svg%3E" />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#0A0E14;--surface:#11161F;--surface2:#161C27;--border:#212939;--text:#EAEEF5;--muted:#8A94A6;--dim:#5A6473;--accent:#7CE0A8;}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif}
+  a{color:var(--accent)}
+  .wrap{max-width:1160px;margin:0 auto;padding:36px 24px 80px}
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace}
+  header{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:30px}
+  h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-0.02em}
+  .sub{color:var(--muted);font-size:14px;margin-top:6px}
+  .btn{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;padding:9px 14px;border-radius:9px;cursor:pointer;background:var(--surface);color:var(--text);border:1px solid var(--border)}
+  .btn.accent{background:var(--accent);color:#0A0E14;border-color:var(--accent);font-weight:700}
+  .grid{display:grid;gap:14px}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:22px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .k-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+  .k-value{font-size:38px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+  .k-note{font-size:12.5px;color:var(--muted);margin-top:9px}
+  .cols{grid-template-columns:1fr 1fr;align-items:start}
+  @media(max-width:820px){.cols{grid-template-columns:1fr}}
+  h3{margin:0 0 16px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:11px}
+  h3 .bar{width:18px;height:3px;border-radius:2px;background:var(--accent)}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-bottom:1px dashed var(--border);font-size:14px}
+  .row:last-child{border-bottom:none}
+  .row .val{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:13px;white-space:nowrap}
+  .barrow{margin:10px 0}
+  .barrow .top{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px}
+  .track{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+  .fill{height:100%;background:var(--accent);border-radius:99px}
+  .q{padding:12px 14px;background:var(--surface2);border-radius:11px;margin-bottom:8px;font-size:14px;line-height:1.5}
+  .q .when{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);margin-top:5px}
+  .empty{color:var(--dim);font-size:14px;padding:20px 0}
+  .gate{max-width:400px;margin:12vh auto 0;text-align:center}
+  .gate input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:13px 15px;color:var(--text);font-size:15px;outline:none;margin:16px 0;font-family:inherit}
+  .gate .err{color:#FF8FA3;font-size:13px;min-height:18px}
+  .scroll{max-height:440px;overflow:auto}
+  .muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+const WORKER = "https://snowy-fire-6121.kvaratskhelia-giorgi777.workers.dev";
+const app = document.getElementById("app");
+
+function esc(s){return String(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function fmtDur(s){if(s<60)return s+"s";const m=Math.floor(s/60);return m+"m "+(s%60)+"s";}
+function timeAgo(t){const d=(Date.now()-t)/1000;if(d<60)return "just now";if(d<3600)return Math.floor(d/60)+"m ago";if(d<86400)return Math.floor(d/3600)+"h ago";return Math.floor(d/86400)+"d ago";}
+function startOfToday(){const d=new Date();d.setHours(0,0,0,0);return d.getTime();}
+
+function gate(err){
+  app.innerHTML = `<div class="wrap"><div class="gate">
+    <h1>CV Analytics</h1>
+    <div class="sub">Enter your dashboard password.</div>
+    <input id="pw" type="password" placeholder="Password" />
+    <div class="err">${err||""}</div>
+    <button class="btn accent" style="width:100%;padding:13px" onclick="tryKey()">View dashboard</button>
+  </div></div>`;
+  const el=document.getElementById("pw");
+  el.focus();
+  el.addEventListener("keydown",e=>{if(e.key==="Enter")tryKey();});
+}
+async function tryKey(){
+  const key=document.getElementById("pw").value.trim();
+  if(!key)return;
+  await loadDash(key);
+}
+window.tryKey=tryKey;
+
+async function loadDash(key){
+  app.innerHTML=`<div class="wrap"><div class="sub" style="margin-top:20vh;text-align:center">Loading…</div></div>`;
+  let data;
+  try{
+    const r=await fetch(WORKER+"/stats?key="+encodeURIComponent(key));
+    if(r.status===401){localStorage.removeItem("cv_stats_key");return gate("Wrong password.");}
+    data=await r.json();
+  }catch(e){return gate("Couldn't reach the server.");}
+  localStorage.setItem("cv_stats_key",key);
+  render(data,key);
+}
+
+function render(d,key){
+  const visits=d.visits||[], questions=d.questions||[], events=d.events||[], sessions=d.sessions||{};
+  const sids=Object.keys(sessions);
+  const today=startOfToday();
+  const wk=Date.now()-7*86400000;
+  const visitsToday=visits.filter(v=>v.t>=today).length;
+  const visitsWk=visits.filter(v=>v.t>=wk).length;
+  const durs=sids.map(s=>sessions[s].secs||0).filter(x=>x>0).sort((a,b)=>a-b);
+  const avg=durs.length?Math.round(durs.reduce((a,b)=>a+b,0)/durs.length):0;
+  const med=durs.length?durs[Math.floor(durs.length/2)]:0;
+  const pdf=events.filter(e=>e.name==="pdf_download").length;
+
+  function split(arr,keyfn){const m={};arr.forEach(x=>{const k=keyfn(x)||"—";m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]);}
+  const langSplit=split(Object.values(sessions),s=>s.lang==="ka"?"Georgian":"English");
+  const devSplit=split(visits,v=>v.dev);
+  const refSplit=split(visits,v=>{try{return v.ref==="direct"?"Direct":new URL(v.ref).hostname.replace(/^www\./,"")}catch(e){return "Direct"}}).slice(0,8);
+  const tzSplit=split(visits,v=>v.tz).slice(0,8);
+  const maxRef=Math.max(1,...refSplit.map(x=>x[1]));
+
+  function bars(list,max){return list.map(([k,n])=>`<div class="barrow"><div class="top"><span>${esc(k)}</span><span class="muted">${n}</span></div><div class="track"><div class="fill" style="width:${Math.round(n/max*100)}%"></div></div></div>`).join("")||`<div class="empty">No data yet.</div>`;}
+
+  const kpi=(label,val,note)=>`<div class="card"><div class="k-label">${label}</div><div class="k-value">${val}</div><div class="k-note">${note}</div></div>`;
+
+  const qList=[...questions].reverse().slice(0,60);
+  const vList=[...visits].reverse().slice(0,50);
+
+  app.innerHTML=`<div class="wrap">
+    <header>
+      <div><h1>CV Analytics</h1><div class="sub">giorgikvaratskhelia.com · live first-party data</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="location.reload()">↻ Refresh</button>
+        <button class="btn" onclick="logout()">Log out</button>
+      </div>
+    </header>
+
+    <div class="grid kpis">
+      ${kpi("Total visits",visits.length,`${visitsToday} today · ${visitsWk} this week`)}
+      ${kpi("Unique visitors",sids.length,"distinct sessions")}
+      ${kpi("Avg. time on page",fmtDur(avg),`median ${fmtDur(med)}`)}
+      ${kpi("PDF downloads",pdf,"résumé exported")}
+      ${kpi("Chat questions",questions.length,"asked to “Ask my CV”")}
+    </div>
+
+    <div class="grid cols" style="margin-bottom:14px">
+      <div class="card"><h3><span class="bar"></span>Language</h3>${bars(langSplit,Math.max(1,...langSplit.map(x=>x[1])))}</div>
+      <div class="card"><h3><span class="bar"></span>Device</h3>${bars(devSplit,Math.max(1,...devSplit.map(x=>x[1])))}</div>
+    </div>
+
+    <div class="grid cols" style="margin-bottom:14px">
+      <div class="card"><h3><span class="bar"></span>Top referrers</h3>${bars(refSplit,maxRef)}</div>
+      <div class="card"><h3><span class="bar"></span>Time zones (rough location)</h3>${bars(tzSplit,Math.max(1,...tzSplit.map(x=>x[1])))}</div>
+    </div>
+
+    <div class="grid cols">
+      <div class="card"><h3><span class="bar"></span>Questions asked (${questions.length})</h3>
+        <div class="scroll">${qList.length?qList.map(q=>`<div class="q">${esc(q.q)}<div class="when">${timeAgo(q.t)}</div></div>`).join(""):`<div class="empty">No questions yet.</div>`}</div>
+      </div>
+      <div class="card"><h3><span class="bar"></span>Recent visits</h3>
+        <div class="scroll">${vList.length?vList.map(v=>`<div class="row"><span>${esc((v.dev||"—"))} · ${v.lang==="ka"?"GE":"EN"} · ${esc(v.tz||"")}</span><span class="val">${timeAgo(v.t)}</span></div>`).join(""):`<div class="empty">No visits yet.</div>`}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+window.logout=function(){localStorage.removeItem("cv_stats_key");gate();};
+
+// auto-login if we have a saved key
+const saved=localStorage.getItem("cv_stats_key");
+if(saved) loadDash(saved); else gate();
+</script>
+</body>
+</html>
