@@ -1,0 +1,41 @@
+*{box-sizing:border-box}
+:root{--bg:#0A0E14;--card:#111722;--card2:#0D121B;--line:#202836;--line2:#2E3A4C;--text:#EAEEF5;--muted:#9AA6B6;--dim:#6B7789;--acc:#7CE0A8;--mono:'JetBrains Mono','Noto Sans Georgian',monospace}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Manrope,'Noto Sans Georgian',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--acc);text-decoration:none}a:hover{color:#A8F0C8}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.top{position:sticky;top:0;z-index:20;background:rgba(10,14,20,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px}
+.name{font-weight:800;letter-spacing:-.02em;color:var(--text);font-size:15px;white-space:nowrap}
+.tr{display:flex;align-items:center;gap:10px}
+.sw{display:flex;gap:4px;padding:4px;border:1px solid var(--line2);border-radius:11px;background:#0F1520}
+.sw a{font:600 11.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:9px 13px;border-radius:8px;color:#C9D2DF;white-space:nowrap}
+.sw a:hover{background:#18202D;color:var(--text)}
+.sw a.hl{background:rgba(124,224,168,.12);color:var(--acc);box-shadow:inset 0 0 0 1px rgba(124,224,168,.55)}
+.lg{display:flex;gap:3px;padding:3px;border:1px solid var(--line2);border-radius:9px}
+.lg button{font:600 10.5px/1 var(--mono);letter-spacing:.1em;padding:8px 9px;border-radius:6px;border:0;background:transparent;color:#C9D2DF;cursor:pointer}
+.lg button.on{background:#1B2431;color:var(--acc)}
+.k{font:600 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--acc)}
+h1{margin:16px 0 14px;font-size:clamp(32px,4.8vw,56px);line-height:1.08;font-weight:800;letter-spacing:-.025em;text-wrap:balance}
+.lead{font-size:17px;line-height:1.6;color:var(--muted);margin:0;text-wrap:pretty}
+.btn{font:600 11.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;padding:13px 16px;border-radius:10px;border:1px solid var(--line2);color:var(--text);background:#151C28;display:inline-flex;gap:8px;align-items:center;white-space:nowrap}
+.btn:hover{border-color:var(--acc);color:var(--text)}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#0A0E14}.btn.p:hover{filter:brightness(1.06);color:#0A0E14}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.sec{padding:40px 0 8px}
+.sh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:22px}
+.sh h2{margin:0;font:600 12px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.sh span{font:500 11px/1 var(--mono);color:var(--dim);white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.stat .n{font-size:36px;font-weight:800;letter-spacing:-.04em;color:var(--acc);line-height:1}
+.stat .l{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.4}
+.stat .c{font:600 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:10px}
+.logos{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
+.logos div{aspect-ratio:1/1;border-radius:12px;overflow:hidden;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:transform .18s}
+.logos div:hover{transform:translateY(-2px)}
+.logos img{width:100%;height:100%;object-fit:cover;display:block}.logos .pd img{width:86%;height:86%;object-fit:contain}
+.foot{margin:56px 0 0;border-top:1px solid var(--line);padding:30px 0 50px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+.foot p{margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.foot small{display:block;font-size:14px;font-weight:500;color:var(--muted);margin-top:6px;letter-spacing:0}
+@media (max-width:900px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.logos{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:640px){.top .name{display:none}.top .wrap{justify-content:center}.sw a{padding:9px 8px;letter-spacing:.04em;font-size:10px}.lg button{padding:8px 7px}}
