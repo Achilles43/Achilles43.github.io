@@ -55,6 +55,25 @@ html[data-theme="light"] .bfl{background:rgba(255,255,255,.85);color:var(--text)
 html[data-theme="light"] .bnm{color:#3A4555}
 html[data-theme="light"] .gw{background-image:linear-gradient(90deg,#15804F 0%,#2B6CB0 35%,#2E9E6B 60%,#15804F 100%)}
 html[data-theme="light"] .foot small{color:var(--muted)}
+html[data-theme="light"] .btn.p,html[data-theme="light"] .wz-nav .btn.p{background:var(--acc);border-color:var(--acc);color:#fff}
+html[data-theme="light"] .btn.p:hover{color:#fff}
+html[data-theme="light"] .biz .pa{background:var(--acc);border-color:var(--acc);color:#fff}
+html[data-theme="light"] .tag{background:#E3F3EA;color:var(--acc)}
+html[data-theme="light"] .kpi{background:#F1F3F6}
+html[data-theme="light"] .shots{background:#E9EDF2}
+html[data-theme="light"] .shots img{background:#fff}
+html[data-theme="light"] .badge{color:#fff}
+html[data-theme="light"] .qt-tabs{background:#fff}
+html[data-theme="light"] .qt-tabs button{color:#3A4555}
+html[data-theme="light"] .qt-tabs button.on{color:#fff}
+html[data-theme="light"] .qt-in input[type=number],html[data-theme="light"] .qt-in input[type=text]{background:#fff}
+html[data-theme="light"] .qt-m,html[data-theme="light"] .qt-chips span{background:#F1F3F6}
+html[data-theme="light"] .also{background:#fff}
+html[data-theme="light"] .svc li{color:#3A4555}
+html[data-theme="light"] .sig span{background:#F1F3F6}
+html[data-theme="light"] .thumbs a{color:#3A4555}
+html[data-theme="light"] .road-intro{background:rgba(21,128,79,.06)}
+html[data-theme="light"] .bmo{background:linear-gradient(135deg,rgba(21,128,79,.08),transparent 60%)}
 @media print{.thm{display:none!important}}
 `;
 var st=document.createElement('style');st.id='gk-chrome';st.textContent=CSS;document.head.appendChild(st);
