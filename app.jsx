@@ -74,7 +74,7 @@ function App() {
     };
     window.addEventListener("afterprint", cleanup);
     await new Promise(r => setTimeout(r, 500));
-    try { window.print(); } catch (e) { /* ignore */ }
+    try { window.gkTrack && window.gkTrack("cv_download"); window.print(); } catch (e) { /* ignore */ }
     // safety cleanup if afterprint never fires
     setTimeout(cleanup, 1500);
   };

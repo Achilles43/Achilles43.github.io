@@ -79,9 +79,9 @@ function wizard(){const q=Q[step],last=step===Q.length-1;
   $("wz").innerHTML=h}
 $("wz").addEventListener("click",e=>{const o=e.target.closest(".opt");
   if(o){const k=o.dataset.key,v=o.dataset.v;if(o.dataset.multi){let a=A[k]||[];if(v==="unsure"||v==="none")a=a.includes(v)?[]:[v];else{a=a.filter(x=>x!=="unsure"&&x!=="none");a=a.includes(v)?a.filter(x=>x!==v):[...a,v]}A[k]=a}else{A[k]=v;if(k==="ads"&&v==="no")A.bud=null}
-    const q=Q[step],auto=!q.multi&&!q.field&&!q.o2&&!q.fields;wizard();if(auto&&valid(q))setTimeout(()=>{if(step<Q.length-1&&Q[step]===q){step++;wizard()}},220);return}
+    const q=Q[step],auto=!q.multi&&!q.field&&!q.o2&&!q.fields;wizard();if(auto&&valid(q))setTimeout(()=>{if(step<Q.length-1&&Q[step]===q){if(step===0&&!window.__gkQs){window.__gkQs=1;window.gkTrack&&gkTrack("quiz_start")}step++;wizard()}},220);return}
   if(e.target.id==="wBack"&&step>0){step--;wizard()}
-  if(e.target.id==="wNext"){if(!valid(Q[step]))return;if(step<Q.length-1){step++;wizard();const f=$("wz").querySelector("input");if(f&&innerWidth>700)f.focus({preventScroll:true})}else build()}});
+  if(e.target.id==="wNext"){if(!valid(Q[step]))return;if(step<Q.length-1){if(step===0&&!window.__gkQs){window.__gkQs=1;window.gkTrack&&gkTrack("quiz_start")}step++;wizard();const f=$("wz").querySelector("input");if(f&&innerWidth>700)f.focus({preventScroll:true})}else build()}});
 $("wz").addEventListener("input",e=>{const f=e.target.dataset.f;if(f){A[f]=e.target.value;const b=$("wNext");if(b)b.disabled=!valid(Q[step]);const hn=$("fhint");if(hn){const bad=f==="cto"&&A.cto&&A.cto.includes("@")&&!okEmail(A.cto);hn.textContent=L(bad?UI.badMail:UI.req);hn.classList.toggle("err",!!bad)}}});
 $("wz").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.tagName==="INPUT"){e.preventDefault();$("wNext").click()}});
 const WV={store:[["New online store","ახალი ონლაინ მაღაზია"],[["Built to sell — catalogue, cart, online payments and delivery","Fast on mobile — Shopify or custom","Tracking and SEO built in from day one"],["აწყობილი გასაყიდად — კატალოგი, კალათა, ონლაინ გადახდა და მიწოდება","სწრაფი მობაილზე — Shopify ან ინდივიდუალური","ტრეკინგი და SEO პირველივე დღიდან"]]],
@@ -141,7 +141,7 @@ async function build(){
   window.scrollTo({top:$("res").getBoundingClientRect().top+scrollY-80,behavior:"smooth"});
   term.print([["agent","▸",LG.a]],0);sig=null;
   if(A.url&&(A.site==="old"||A.site==="good")){term.print([["audit","▸",LG.b+" · "+A.url]],0);try{const r=await fetch(WORKER+"/audit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({target:A.url})});const d=await r.json();sig=d&&!d.error&&d.status<400?d:null}catch(e){}term.print([["audit",sig?"✓":"!",sig?"ok":"—"]],0)}
-  const o=pick();term.print([["agent","✓",LG.c+" · "+o.main.length]],0);renderOffer(o,L(UI.thinking));
+  const o=pick();window.gkTrack&&gkTrack("generate_lead",{form:"for_you",industry:A.type||"",goal:A.goal||"",services:o.main.map(x=>x.k).join(",")});term.print([["agent","✓",LG.c+" · "+o.main.length]],0);renderOffer(o,L(UI.thinking));
   beacon(`offer|${A.type}|${A.goal}|${A.market}|${A.site}|ads:${A.ads||""}/${A.bud||""}|src:${(A.src||[]).join(",")}|need:${(A.need||[]).join(",")}|${A.url||""}`);
   if((A.cto||"").trim()||(A.cphone||"").trim())beacon(`lead|${(A.cname||"").trim()}|${A.cto.trim()}${(A.cphone||"").trim()?" / "+A.cphone.trim():""}|${(A.name||"").trim()}|${A.type}|${A.url||""}|${o.main.map(x=>x.k).join(",")}`);
   term.print([["claude","▸",LG.d]],0);let summary="",sumEn="",sumKa="";const clean=t=>{t=String(t||"").replace(/\*\*/g,"").replace(/[\u0900-\u0DFF]/g,"").trim();const m=t.match(/^[\s\S]*[.!?։](?=\s|$)/);return m?m[0]:t};
