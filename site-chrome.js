@@ -74,7 +74,19 @@ html[data-theme="light"] .sig span{background:#F1F3F6}
 html[data-theme="light"] .thumbs a{color:#3A4555}
 html[data-theme="light"] .road-intro{background:rgba(21,128,79,.06)}
 html[data-theme="light"] .bmo{background:linear-gradient(135deg,rgba(21,128,79,.08),transparent 60%)}
-@media print{.thm{display:none!important}}
+.top .lg{padding:3px;border-radius:10px}
+.top .lg button{font-size:11.5px;padding:8px 11px;letter-spacing:.06em;border-radius:7px}
+.top .lg button.on{background:var(--acc)!important;color:#0A0E14!important}
+html[data-theme="light"] .top .lg button.on{color:#fff!important}
+.ka-hint{position:relative;z-index:19;background:linear-gradient(90deg,rgba(124,224,168,.16),rgba(124,224,168,.06));border-bottom:1px solid rgba(124,224,168,.35);font:600 13.5px/1.4 'Noto Sans Georgian',Manrope,sans-serif;color:var(--text);animation:kah .5s ease both}
+.ka-hint .wrap{display:flex;align-items:center;justify-content:center;gap:14px;min-height:46px;padding-top:6px;padding-bottom:6px;flex-wrap:wrap}
+.ka-hint a{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:var(--acc);color:#0A0E14!important;font-weight:700;text-decoration:none}
+.ka-hint .wrap{position:relative;padding-right:44px!important}
+.ka-hint button{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;padding:6px}
+@media (max-width:480px){.ka-hint{font-size:12.5px}.ka-hint .wrap{gap:10px;justify-content:flex-start}.ka-hint a{padding:6px 11px}}
+html[data-theme="light"] .ka-hint a{color:#fff!important}
+@keyframes kah{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media print{.thm,.ka-hint{display:none!important}}
 `;
 var st=document.createElement('style');st.id='gk-chrome';st.textContent=CSS;document.head.appendChild(st);
 
@@ -93,6 +105,27 @@ function mount(){
     tr.appendChild(b);
   }
   setT(root.getAttribute('data-theme'));
+  document.querySelectorAll('.top .lg button').forEach(function(b){if(b.dataset.l==='ka')b.textContent='ქართ';if(b.dataset.l==='en')b.textContent='ENG'});
+  langHint();
 }
+function alt(l){var a=document.querySelector('link[rel="alternate"][hreflang="'+l+'"]');return a?new URL(a.href).pathname+location.search+location.hash:null}
+function langHint(){
+  if(!GKM||GKM.content!=='en')return;
+  var saved=null;try{saved=localStorage.getItem('gk_lang')}catch(e){}
+  var tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){}
+  var dismissed=false;try{dismissed=localStorage.getItem('gk_kahint')==='1'}catch(e){}
+  if(saved||dismissed||tz!=='Asia/Tbilisi')return;
+  var href=alt('ka');if(!href)return;
+  var top=document.querySelector('.top');if(!top)return;
+  var d=document.createElement('div');d.className='ka-hint';d.setAttribute('role','region');d.setAttribute('aria-label','Georgian version');
+  d.innerHTML='<div class="wrap"><span>საიტი ქართულადაც არის</span><a href="'+href+'">ქართულად ნახვა →</a><button type="button" aria-label="Close">×</button></div>';
+  d.querySelector('a').addEventListener('click',function(){try{localStorage.setItem('gk_lang','ka')}catch(e){}});
+  d.querySelector('button').addEventListener('click',function(){try{localStorage.setItem('gk_kahint','1')}catch(e){}d.remove()});
+  top.insertAdjacentElement('afterend',d);
+}
+// returning visitor: open the language they chose before (only on entry from outside the site)
+(function(){if(!GKM)return;var saved=null;try{saved=localStorage.getItem('gk_lang')}catch(e){}
+  var internal=false;try{internal=document.referrer&&new URL(document.referrer).host===location.host}catch(e){}
+  if(saved&&(saved==='ka'||saved==='en')&&saved!==GKM.content&&!internal){var h=alt(saved);if(h&&h!==location.pathname+location.search+location.hash)location.replace(h)}})();
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount):mount();
 })();
