@@ -32,6 +32,7 @@ const css=`.qt{margin-top:56px}.qt-h{display:flex;justify-content:space-between;
 .qt-chips{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
 .qt-chips span{font:600 11px/1 'JetBrains Mono',monospace;padding:8px 10px;border-radius:7px;background:#0D121B;border:1px solid var(--line)}
 .qt-chips .y{color:var(--acc);border-color:rgba(124,224,168,.35)}.qt-chips .n{color:var(--dim)}
+.qt-chips .m{color:#E8C468;border-color:rgba(232,196,104,.35)}
 .qt-empty{grid-column:1/-1;color:var(--dim);font-size:13.5px;line-height:1.5;margin:0}
 @media (max-width:860px){.qt-p{grid-template-columns:1fr;padding:18px}}`;
 const st=document.createElement("style");st.textContent=css;document.head.appendChild(st);
@@ -50,7 +51,7 @@ function out(){const t=L();
   if(chk.err)return `<p class="qt-empty">${chk.err}</p>`;
   const tools=[["GA4","ga4"],["GTM","gtm"],["Meta Pixel","metaPixel"],["TikTok Pixel","tiktokPixel"],["Clarity / Hotjar","heatmaps"]],extra=[["HTTPS","https"],["Schema","schemaJsonLd"],["OG tags","openGraph"],["Canonical","canonical"]];
   const n=tools.filter(x=>chk[x[1]]).length,core=(chk.ga4||chk.gtm)+!!chk.metaPixel;
-  return `<div class="qt-m"><div class="n${core<2?(core?" w":" b"):""}">${n}/5</div><div class="l">${t.found}</div></div><div class="qt-m"><div class="n${chk.responseMs>1500?" w":""}">${f(chk.responseMs/1000,2)}s</div><div class="l">${t.resp}</div></div><div class="qt-chips">${[...tools,...extra].map(x=>`<span class="${chk[x[1]]?"y":"n"}">${chk[x[1]]?"✓":"✗"} ${x[0]}</span>`).join("")}</div><p class="qt-note">${core>=2?t.verdictGood:core?t.verdictMid:t.verdictBad} <a href="https://calendly.com/kvaratskhelia-giorgi777/intro-call-15-min" target="_blank" rel="noopener noreferrer">${t.help}</a></p>`}
+  return `<div class="qt-m"><div class="n${core<2?(core?" w":" b"):""}">${n}/5</div><div class="l">${t.found}</div></div><div class="qt-m"><div class="n${chk.responseMs>1500?" w":""}">${f(chk.responseMs/1000,2)}s</div><div class="l">${t.resp}</div></div><div class="qt-chips">${[...tools,...extra].map(x=>{const mb=x[1]==="ga4"&&!chk.ga4&&chk.gtm;return `<span class="${chk[x[1]]?"y":mb?"m":"n"}">${chk[x[1]]?"✓":mb?"?":"✗"} ${x[0]}${mb?(document.documentElement.lang==="ka"?" · GTM-ში?":" · in GTM?"):""}</span>`}).join("")}</div><p class="qt-note">${core>=2?t.verdictGood:core?t.verdictMid:t.verdictBad} <a href="https://calendly.com/kvaratskhelia-giorgi777/intro-call-15-min" target="_blank" rel="noopener noreferrer">${t.help}</a></p>`}
 function render(){const t=L();
   const ins=tab===0?inp("price",t.price,"₾")+inp("cost",t.cost,"₾")+inp("cpa",t.cpa,"₾"):tab===1?inp("budget",t.budget,"₾",50)+inp("cpc",t.cpc,"₾",0.01)+inp("cr",t.cr,"%",0.1)+inp("aov",t.aov,"₾"):`<label>${t.url}<span class="row"><input type="text" data-k="url" value="${v.url.replace(/"/g,"")}" placeholder="yourbusiness.ge"></span></label><button class="btn p" id="qtGo" type="button"${busy?" disabled":""}>${busy?t.checking:t.check}</button>`;
   host.innerHTML=`<div class="qt-h"><div><span class="k">${t.k}</span><h2>${t.h}</h2></div><p>${t.sub}</p></div><div class="qt-p"><div class="qt-in">${ins}</div><div class="qt-out" id="qtOut">${out()}</div></div>`}
