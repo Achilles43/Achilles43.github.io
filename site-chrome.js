@@ -3,10 +3,13 @@
 (function(){
 var GKM=document.querySelector('meta[name="gk-lang"]');var HOME=GKM?(GKM.content==='ka'?'/ka/':'/'):'Home A.html';
 var root=document.documentElement;
-function getT(){try{return localStorage.getItem('gk_theme')||'dark'}catch(e){return 'dark'}}
-function setT(t){root.setAttribute('data-theme',t);try{localStorage.setItem('gk_theme',t)}catch(e){}
+function sysT(){try{return window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}catch(e){return 'dark'}}
+function savedT(){try{return localStorage.getItem('gk_theme')}catch(e){return null}}
+function getT(){return savedT()||sysT()}
+function setT(t,save){root.setAttribute('data-theme',t);if(save){try{localStorage.setItem('gk_theme',t)}catch(e){}}
   document.querySelectorAll('.thm').forEach(function(b){b.setAttribute('aria-pressed',t==='light');b.title=t==='light'?'Dark mode':'Light mode'})}
 root.setAttribute('data-theme',getT());
+try{matchMedia('(prefers-color-scheme: light)').addEventListener('change',function(){if(!savedT())setT(sysT())})}catch(e){}
 
 var CSS=`
 .gk-left{display:flex;align-items:center;gap:12px;min-width:0}
@@ -73,6 +76,7 @@ html[data-theme="light"] .svc li{color:#3A4555}
 html[data-theme="light"] .sig span{background:#F1F3F6}
 html[data-theme="light"] .thumbs a{color:#3A4555}
 html[data-theme="light"] .road-intro{background:rgba(21,128,79,.06)}
+html[data-theme="light"] .cap{color:#3A4555;border-color:var(--line2);background:#fff}
 html[data-theme="light"] .bmo{background:linear-gradient(135deg,rgba(21,128,79,.08),transparent 60%)}
 .top .lg{padding:3px;border-radius:10px}
 .top .lg button{font-size:11.5px;padding:8px 11px;letter-spacing:.06em;border-radius:7px}
@@ -120,7 +124,7 @@ function mount(){
   var tr=document.querySelector('.top .tr');
   if(tr&&!tr.querySelector('.thm')){
     var b=document.createElement('button');b.type='button';b.className='thm';b.setAttribute('aria-label','Toggle light / dark mode');b.textContent='◐';
-    b.addEventListener('click',function(){setT(root.getAttribute('data-theme')==='light'?'dark':'light')});
+    b.addEventListener('click',function(){setT(root.getAttribute('data-theme')==='light'?'dark':'light',true)});
     tr.appendChild(b);
   }
   setT(root.getAttribute('data-theme'));

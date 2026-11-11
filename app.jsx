@@ -8,7 +8,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
-  const [dark, setDark] = React.useState(() => { try { const v = localStorage.getItem("gk_theme"); if (v) return v !== "light"; } catch (e) {} return t.initialMode !== "light"; });
+  const [dark, setDark] = React.useState(() => { try { const v = localStorage.getItem("gk_theme"); if (v) return v !== "light"; } catch (e) {} try { return !window.matchMedia("(prefers-color-scheme: light)").matches; } catch (e) {} return t.initialMode !== "light"; });
   const toggleTheme = () => setDark(d => { const nd = !d; try { localStorage.setItem("gk_theme", nd ? "dark" : "light"); } catch (e) {} return nd; });
   const [recruiter, setRecruiter] = React.useState(false);
   const gkMeta = document.querySelector('meta[name="gk-lang"]');
