@@ -87,6 +87,25 @@ html[data-theme="light"] .top .lg button.on{color:#fff!important}
 html[data-theme="light"] .ka-hint a{color:#fff!important}
 @keyframes kah{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 @media print{.thm,.ka-hint{display:none!important}}
+/* contact dock: WhatsApp / Telegram / call */
+.gk-dock{position:fixed;right:20px;bottom:20px;z-index:70;display:flex;flex-direction:row;align-items:center;gap:8px;font:700 13px/1 Manrope,'Noto Sans Georgian',sans-serif}
+.gk-dock a{display:flex;align-items:center;gap:10px;height:48px;padding:0 16px 0 14px;border-radius:999px;color:#fff!important;text-decoration:none;box-shadow:0 10px 28px rgba(0,0,0,.35);transition:transform .2s,box-shadow .2s}
+.gk-dock a:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.gk-dock a svg{flex:none}
+@media (min-width:761px){.gk-dock .d-wa,.gk-dock .d-tg{width:48px;padding:0;justify-content:center}.gk-dock .d-wa .t,.gk-dock .d-tg .t{display:none}}
+.gk-dock .d-wa{background:#25D366;color:#06210f!important}
+.gk-dock .d-tg{background:#2AABEE}
+.gk-dock .d-call{background:#151C28;border:1.5px solid var(--acc);color:var(--text)!important}
+.gk-dock .d-call b{color:var(--acc);font-weight:800;letter-spacing:.01em}
+html[data-theme="light"] .gk-dock .d-call{background:#fff}
+@media (max-width:760px){
+ .gk-dock{left:0;right:0;bottom:0;flex-direction:row;gap:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:rgba(10,14,20,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line2)}
+ html[data-theme="light"] .gk-dock{background:rgba(255,255,255,.95)}
+ .gk-dock a{flex:1;justify-content:center;height:46px;padding:0 6px;margin:0 4px;border-radius:12px;box-shadow:none;font-size:12.5px}
+ .gk-dock .d-call b{display:none}
+ body{padding-bottom:70px}
+}
+@media print{.gk-dock{display:none!important}}
 `;
 var st=document.createElement('style');st.id='gk-chrome';st.textContent=CSS;document.head.appendChild(st);
 
@@ -107,6 +126,20 @@ function mount(){
   setT(root.getAttribute('data-theme'));
   document.querySelectorAll('.top .lg button').forEach(function(b){if(b.dataset.l==='ka')b.textContent='ქართ';if(b.dataset.l==='en')b.textContent='ENG'});
   langHint();
+  dock();
+}
+
+var WA='<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.84 9.84 0 0 0 12.04 2Zm5.78 14.13c-.24.68-1.43 1.32-1.97 1.37-.5.05-1.13.07-1.83-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.8-4.18-4.94-4.37-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.01-2.41.27-.29.58-.36.78-.36h.56c.18 0 .42-.07.66.5.24.58.82 2 .89 2.15.07.14.12.31.02.5-.1.19-.14.31-.29.48-.14.17-.3.38-.43.51-.14.14-.29.3-.12.59.17.29.75 1.23 1.6 1.99 1.1.98 2.03 1.28 2.32 1.43.29.14.46.12.63-.07.17-.19.72-.84.92-1.13.19-.29.38-.24.65-.14.26.1 1.68.79 1.97.94.29.14.48.22.55.34.07.12.07.7-.17 1.38Z"/></svg>';
+var TG='<svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.94 4.66 18.9 19.01c-.23 1.01-.83 1.26-1.68.79l-4.63-3.41-2.24 2.15c-.25.25-.45.45-.93.45l.33-4.71 8.58-7.75c.37-.33-.08-.52-.58-.19L7.15 13.03 2.59 11.6c-.99-.31-1.01-.99.21-1.47l17.8-6.86c.83-.31 1.55.19 1.34 1.39Z"/></svg>';
+var PH='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>';
+function dock(){
+  if(document.querySelector('.gk-dock'))return;
+  var ka=(GKM?GKM.content:(document.documentElement.lang||'en'))==='ka';
+  var d=document.createElement('nav');d.className='gk-dock';d.setAttribute('aria-label',ka?'დამიკავშირდი':'Contact');
+  d.innerHTML='<a class="d-wa" aria-label="WhatsApp" title="WhatsApp" href="https://wa.me/995557077373" target="_blank" rel="noopener noreferrer">'+WA+'<span class="t">WhatsApp</span></a>'+
+    '<a class="d-tg" aria-label="Telegram" title="Telegram" href="https://t.me/+995557077373" target="_blank" rel="noopener noreferrer">'+TG+'<span class="t">Telegram</span></a>'+
+    '<a class="d-call" href="tel:+995557077373">'+PH+'<span class="d-l">'+(ka?'დარეკე':'Call')+'</span> <b>+995 557 07 73 73</b></a>';
+  document.body.appendChild(d);
 }
 function alt(l){var a=document.querySelector('link[rel="alternate"][hreflang="'+l+'"]');return a?new URL(a.href).pathname+location.search+location.hash:null}
 function langHint(){
