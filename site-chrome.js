@@ -18,7 +18,7 @@ var CSS=`
 .gk-logo:hover .gk-mark{background:var(--acc);color:var(--bg);transform:rotate(-6deg)}
 .top .name.gk-logo{display:inline-flex!important}
 @media (max-width:640px){.top .wrap{justify-content:space-between!important;flex-wrap:wrap;height:auto!important;padding-top:8px;padding-bottom:8px;row-gap:8px}.top .tr{flex-wrap:wrap;justify-content:flex-end;gap:6px}.gk-mark{width:32px;height:32px;font-size:12px}.thm{width:32px;height:32px}}
-@media (max-width:480px){.top .wrap{column-gap:6px}.top .tr,.top .gk-left{display:contents}.top .lg{order:1;margin-left:auto}.top .thm{order:2}.top .sw{order:3;width:100%;justify-content:space-between}}
+@media (max-width:480px){.top .sw a{padding:9px 6px!important;letter-spacing:.02em!important;font-size:10px!important}.top .wrap{column-gap:6px}.top .tr,.top .gk-left{display:contents}.top .lg{order:1;margin-left:auto}.top .thm{order:2}.top .sw{order:3;width:100%;justify-content:space-between}}
 .thm{flex:none;width:36px;height:36px;border-radius:9px;border:1px solid var(--line2);background:transparent;color:var(--text);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .2s,transform .3s}
 .thm:hover{border-color:var(--acc);transform:rotate(180deg)}
 .thm:focus-visible,.gk-logo:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
@@ -76,6 +76,8 @@ html[data-theme="light"] .svc li{color:#3A4555}
 html[data-theme="light"] .sig span{background:#F1F3F6}
 html[data-theme="light"] .thumbs a{color:#3A4555}
 html[data-theme="light"] .road-intro{background:rgba(21,128,79,.06)}
+html[data-theme="light"] .btn.wa{background:#25D366;border-color:#25D366;color:#06210f}
+html[data-theme="light"] .btn.tg{background:#2AABEE;border-color:#2AABEE;color:#04192A}
 html[data-theme="light"] .cap{color:#3A4555;border-color:var(--line2);background:#fff}
 html[data-theme="light"] .bmo{background:linear-gradient(135deg,rgba(21,128,79,.08),transparent 60%)}
 .top .lg{padding:3px;border-radius:10px}
@@ -127,6 +129,12 @@ function mount(){
     b.addEventListener('click',function(){setT(root.getAttribute('data-theme')==='light'?'dark':'light',true)});
     tr.appendChild(b);
   }
+  var sw2=document.querySelector('.top .sw');
+  if(sw2&&!sw2.querySelector('.gk-shop')){var ka=(GKM?GKM.content:(document.documentElement.lang||'en'))==='ka';
+    var a=document.createElement('a');a.className='gk-shop';a.href=GKM?(GKM.content==='ka'?'/ka/online-shop/':'/online-shop/'):'OnlineShop.html';a.textContent=ka?'მაღაზია':'Store';
+    if(/online-shop|OnlineShop/.test(location.pathname))a.classList.add('on');
+    var w=Array.from(sw2.querySelectorAll('a')).find(function(x){return /Work\.html|websites/.test(x.getAttribute('href')||'')});
+    if(w&&w.nextSibling)sw2.insertBefore(a,w.nextSibling);else sw2.appendChild(a)}
   setT(root.getAttribute('data-theme'));
   document.querySelectorAll('.top .lg button').forEach(function(b){if(b.dataset.l==='ka')b.textContent='ქართ';if(b.dataset.l==='en')b.textContent='ENG'});
   langHint();
