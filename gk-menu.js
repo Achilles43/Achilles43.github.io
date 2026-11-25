@@ -4,8 +4,8 @@ var GKM=document.querySelector('meta[name="gk-lang"]');
 function lang(){return (GKM?GKM.content:(document.documentElement.lang||'en'))==='ka'?'ka':'en'}
 var ROUTES={home:['','Home A.html'],shop:['online-shop/','OnlineShop.html'],ads:['advertising/','Advertising.html'],you:['for-you/','Business.html'],web:['websites/','Work.html'],cv:['cv/','Resume.html']};
 function href(k){var r=ROUTES[k];if(!GKM)return r[1];return (lang()==='ka'?'/ka/':'/')+r[0]}
-var T={ka:{btn:'მენიუ',home:['მთავარი','გიორგი კვარაცხელია'],shop:['ონლაინ მაღაზია','მაღაზია გადახდებით — 14 დღეში'],ads:['რეკლამა','Meta და Google Ads, რომელიც ყიდის'],you:['შენთვის','უფასო გეგმა 2 წუთში'],web:['საიტები','ნამუშევრები'],cv:['CV','გამოცდილება და შედეგები'],contact:'დამიკავშირდი'},
-       en:{btn:'Menu',home:['Home','Giorgi Kvaratskhelia'],shop:['Online store','A store with payments — in 14 days'],ads:['Advertising','Meta & Google Ads that sell'],you:['For you','A free plan in 2 minutes'],web:['Websites','Work I’ve built'],cv:['CV','Experience and results'],contact:'Contact me'}};
+var T={ka:{btn:'მენიუ',home:['მთავარი','გიორგი კვარაცხელია'],shop:['ონლაინ მაღაზია','მაღაზია გადახდებით — 14 დღეში'],ads:['რეკლამა','Meta და Google Ads, რომელიც ყიდის'],you:['არ იცი, რა გჭირდება?','უფასო გეგმა 2 წუთში →'],web:['ნამუშევრები','საიტები, რომლებიც ავაწყვე'],cv:['CV','გამოცდილება და შედეგები'],contact:'დამიკავშირდი'},
+       en:{btn:'Menu',home:['Home','Giorgi Kvaratskhelia'],shop:['Online store','A store with payments — in 14 days'],ads:['Advertising','Meta & Google Ads that sell'],you:['Not sure what you need?','Free plan in 2 minutes →'],web:['Work','Websites I’ve built'],cv:['CV','Experience and results'],contact:'Contact me'}};
 function current(){var p=location.pathname;
   if(/online-shop|OnlineShop/.test(p))return 'shop';if(/advertising|Advertising/.test(p))return 'ads';if(/for-you|Business/.test(p))return 'you';if(/websites|Work/.test(p))return 'web';if(/\/cv\/|Resume/.test(p))return 'cv';return 'home'}
 var CSS=`
@@ -26,6 +26,7 @@ var CSS=`
 .gkm-panel .d{font-size:12.5px;color:var(--gkm-muted);display:block;margin-top:3px}
 .gkm-panel .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--gkm-line)}
 .gkm-panel a.on .dot,.gkm-panel a.hot .dot{background:var(--gkm-acc)}
+.gkm-panel a.quiz{border:1px dashed var(--gkm-acc)}.gkm-panel a.quiz .n{color:var(--gkm-acc)}
 .gkm-panel .sep{height:1px;background:var(--gkm-line);margin:6px 8px}
 .gkm-panel .ct{display:flex;gap:6px;padding:6px 4px 2px}
 .gkm-panel .ct a{flex:1;justify-content:center;padding:10px 8px;font:700 12.5px/1 Manrope,sans-serif;border:1px solid var(--gkm-line)}
@@ -47,7 +48,7 @@ function build(nav){
   btn.innerHTML='<span class="gkm-ico" aria-hidden="true"><i></i><i></i><i></i></span>'+L.btn;
   nav.parentNode.insertBefore(btn,nav.nextSibling);
   var p=document.createElement('nav');p.className='gkm-panel';p.setAttribute('aria-label',L.btn);
-  var h='';['home','shop','ads','you','web','cv'].forEach(function(k){h+='<a href="'+href(k)+'" class="'+(k===cur?'on':'')+(k==='shop'||k==='ads'||k==='you'?' hot':'')+'"><span class="dot"></span><span><span class="n">'+L[k][0]+'</span><span class="d">'+L[k][1]+'</span></span></a>'});
+  var h='';['home','shop','ads','web','cv','you'].forEach(function(k){if(k==='you')h+='<div class="sep"></div>';h+='<a href="'+href(k)+'" class="'+(k===cur?'on':'')+(k==='shop'||k==='ads'?' hot':'')+(k==='you'?' quiz':'')+'"><span class="dot"></span><span><span class="n">'+L[k][0]+'</span><span class="d">'+L[k][1]+'</span></span></a>'});
   h+='<div class="sep"></div><div class="ct"><a class="wa" href="https://wa.me/995557077373" target="_blank" rel="noopener noreferrer">WhatsApp</a><a class="tg" href="https://t.me/+995557077373" target="_blank" rel="noopener noreferrer">Telegram</a><a class="ph" href="tel:+995557077373">'+(lang()==='ka'?'დარეკე':'Call')+'</a></div>';
   p.innerHTML=h;document.body.appendChild(p);
   function place(){var r=btn.getBoundingClientRect(),w=Math.min(320,innerWidth-24);var left=Math.min(Math.max(12,r.left),innerWidth-w-12);p.style.top=(r.bottom+10)+'px';p.style.left=left+'px'}
